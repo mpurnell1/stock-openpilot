@@ -79,6 +79,9 @@ for chestnut in [False, True] if CHESTNUT else [False]:
     node = lenv.Command(warp_pkl_path, tinygrad_files + warp_deps + [Value(cmd)], action)
     if chestnut:
       lenv.SideEffect(chestnut_lock, node)
+      # scons deletes a target before rebuilding it, and with the 12 V rail down the action above
+      # returns without producing one, so keep the last good warp rather than lose the big model
+      lenv.Precious(node)
 
 dm_w, dm_h = DM_INPUT_SIZE
 for cam_w, cam_h in camera_configs:
